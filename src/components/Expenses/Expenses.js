@@ -1,16 +1,50 @@
-import React from 'react';
-import { Typography, TextField, Stack, Button } from '@mui/material';
+import React, { useState } from 'react';
+import { Typography, TextField, Stack, Button, Snackbar, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { getAllExpenses, changeName, changeCost } from '../../redux/expense/expenseSlice';
 const Expenses = () => {
+    const [open, setOpen] = useState(false);
+    const [direction, setDirection] = useState({
+        vertical: "",
+        horizontal: ""
+    })
+    const { vertical, horizontal } = direction;
     const dispatch = useDispatch();
     const { name, cost } = useSelector((state) => state.expenses)
 
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+    };
+
+    const action = (
+        <React.Fragment>
+            <IconButton
+                size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={handleClose}
+            >
+                <CloseIcon fontSize="small" />
+            </IconButton>
+        </React.Fragment>
+    );
+
     const onSave = () => {
-        dispatch(getAllExpenses({ id: uuidv4(), name, cost }));
-        dispatch(changeName(""));
-        dispatch(changeCost(""));
+        if (name.length === 0 && cost.length === 0) {
+            setOpen(true);
+            setDirection(prevState => ({ ...prevState, vertical: 'top', horizontal: 'right' }))
+        }
+        else {
+            dispatch(getAllExpenses({ id: uuidv4(), name, cost }));
+            dispatch(changeName(""));
+            dispatch(changeCost(""));
+        }
     }
 
     const onChangeName = (event) => {
@@ -51,6 +85,14 @@ const Expenses = () => {
             <Button variant="contained" size="medium" sx={{ mt: 2 }} onClick={onSave}>
                 Save
             </Button>
+            <Snackbar
+                open={open}
+                anchorOrigin={{ vertical, horizontal }}
+                autoHideDuration={3000}
+                onClose={handleClose}
+                message="Please enter your expenses"
+                action={action}
+            />
         </div>
     );
 };

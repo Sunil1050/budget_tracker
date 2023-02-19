@@ -1,32 +1,44 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBudget } from "../../redux/expense/expenseSlice"
-import { Typography, Grid, Card, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { Typography, Grid, Card, Button, Modal, Box, TextField } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
 
 const BudgetButtons = () => {
     const dispatch = useDispatch();
     const { budget, allExpenses } = useSelector((state) => state.expenses)
-    
-    const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-        '& .MuiDialogContent-root': {
-            padding: theme.spacing(2),
-        },
-        '& .MuiDialogActions-root': {
-            padding: theme.spacing(1),
-        },
-    }));
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
-    const [open, setOpen] = useState(false);
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        width: '80%',
+        maxWidth: 400,
+        transform: 'translate(-50%, -50%)',
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+        '@media (min-width: 600px)': {
+            width: '60%',
+            maxWidth: 600,
+        },
+        '@media (min-width: 960px)': {
+            width: '40%',
+            maxWidth: 960,
+        },
+        '@media (min-width: 1280px)': {
+            width: '30%',
+            maxWidth: 1280,
+        },
+    };
+
+
     const [expenseBudget, setExpenseBudget] = useState(budget);
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-    const handleClose = () => {
-        setOpen(false);
-    };
 
     const onChangeBudget = (event) => {
         setExpenseBudget(event.target.value)
@@ -38,39 +50,44 @@ const BudgetButtons = () => {
     }
 
     const expensesAmount = allExpenses.reduce((total, item) => total + parseInt(item.cost), 0);
-    console.log("Hi: ", expensesAmount);
 
     return (
         <Grid container spacing={2}>
             <Grid item xs={6} sm={4} md={4}>
                 <Card variant="outlined" sx={{ p: 2.3, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f8f9fa' }}>
                     <Typography variant="body2" gutterBottom>{`Budget: Rs.${budget}`}</Typography>
-                    <Button variant="contained" color="primary" onClick={handleClickOpen}>
+                    <Button variant="contained" color="primary" onClick={handleOpen} sx={{ display: { xs: 'none', sm: 'none', md: 'inline' } }}
+                    >
                         Edit
                     </Button>
-                    <BootstrapDialog
-                        onClose={handleClose}
-                        aria-labelledby="customized-dialog-title"
+                    <IconButton color="dark" aria-label="edit budget" size="medium" sx={{ display: { xs: 'inline', sm: 'inline', md: 'none' } }} onClick={handleOpen}>
+                        <EditIcon />
+                    </IconButton>
+                    <Modal
                         open={open}
+                        onClose={handleClose}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
                     >
-                        <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-                            Modal title
-                        </BootstrapDialogTitle>
-                        <DialogContent dividers>
-                            <Typography variant="h5" gutterBottom>Set your Budget</Typography>
-                            <TextField id="outlined-basic" label="Budget" variant="outlined" onChange={onChangeBudget} defaultValue={expenseBudget} />
-                        </DialogContent>
-                        <DialogActions>
-                            <Button autoFocus onClick={onSaveBudget}>
-                                Save changes
+                        <Box sx={style}>
+                            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ mb: 1 }}>
+                                Set your Budget
+                            </Typography>
+                            <TextField id="outlined-basic" label="Budget" variant="outlined" onChange={onChangeBudget} value={expenseBudget} />
+                            <br />
+                            <Button variant="contained" color="primary" onClick={onSaveBudget} sx={{ mt: 1 }}>
+                                Save
                             </Button>
-                        </DialogActions>
-                    </BootstrapDialog>
+                            <Button variant="contained" color="error" onClick={handleClose} sx={{ ml: 1, mt: 1 }}>
+                                Close
+                            </Button>
+                        </Box>
+                    </Modal>
                 </Card>
             </Grid>
             <Grid item xs={6} sm={4} md={4}>
                 <Card variant="outlined" sx={{ p: 3, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#28a745', color: 'white' }}>
-                    <Typography variant="body2" gutterBottom>{`Remaining: Rs.${budget-expensesAmount}`}</Typography>
+                    <Typography variant="body2" gutterBottom>{`Remaining: Rs.${budget - expensesAmount}`}</Typography>
                 </Card>
             </Grid>
             <Grid item xs={6} sm={4} md={4}>
@@ -82,27 +99,4 @@ const BudgetButtons = () => {
     );
 };
 
-function BootstrapDialogTitle(props) {
-    const { children, onClose, ...other } = props;
-
-    return (
-        <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
-            {children}
-            {onClose ? (
-                <IconButton
-                    aria-label="close"
-                    onClick={onClose}
-                    sx={{
-                        position: 'absolute',
-                        right: 8,
-                        top: 8,
-                        color: (theme) => theme.palette.grey[500],
-                    }}
-                >
-                    <CloseIcon />
-                </IconButton>
-            ) : null}
-        </DialogTitle>
-    );
-}
 export default BudgetButtons;
