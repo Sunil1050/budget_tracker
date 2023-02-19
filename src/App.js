@@ -1,25 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
+import { Container, Typography } from '@mui/material';
+import BudgetButtons from './components/BudgetButtons';
+import Expenses from './components/Expenses/Expenses';
+import ExpensesList from './components/ExpensesList/ExpensesList';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <>
+      <Container>
+        <Typography variant='h4' align='left' sx={{ mb: 2, mt: 2, fontWeight: 600 }}>Budget Planner</Typography>
+        <BudgetButtons />
+        <Expenses />
+        <ExpensesList />
+      </Container>
+    </>
+  )
 }
-
 export default App;
