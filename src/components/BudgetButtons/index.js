@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton';
 const BudgetButtons = () => {
     const dispatch = useDispatch();
     const { budget, allExpenses } = useSelector((state) => state.expenses)
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 

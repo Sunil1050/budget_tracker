@@ -21,13 +21,16 @@ const expenseSlice = createSlice({
         changeCost: (state, { payload }) => {
             state.cost = payload
         },
-        searchExpense: (state, {payload}) => {
+        searchExpense: (state, { payload }) => {
             state.searchTerm = payload
         },
-        deleteExpense: (state, {payload}) => {
+        updateExpense: (state, { payload }) => {
             state.allExpenses = payload
         },
-        setBudget: (state, {payload}) => {
+        deleteExpense: (state, { payload }) => {
+            state.allExpenses = payload
+        },
+        setBudget: (state, { payload }) => {
             state.budget = payload
         }
     },
@@ -35,4 +38,4 @@ const expenseSlice = createSlice({
 
 export default expenseSlice.reducer;
 
-export const { getAllExpenses, changeName, changeCost, searchExpense, deleteExpense, setBudget } = expenseSlice.actions
+export const { getAllExpenses, changeName, changeCost, searchExpense, updateExpense, deleteExpense, setBudget } = expenseSlice.actions
